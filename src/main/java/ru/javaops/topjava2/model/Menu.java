@@ -10,7 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Entity
@@ -34,9 +34,9 @@ public class Menu extends BaseEntity {
 
     @Column(name = "date")
     @NotNull
-    Date date;
+    LocalDate date;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "restaurant_id")
     @NotNull
     @OnDelete(action = OnDeleteAction.NO_ACTION)

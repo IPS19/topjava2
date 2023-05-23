@@ -1,12 +1,14 @@
 package ru.javaops.topjava2.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,6 +17,6 @@ import lombok.Setter;
 @Table(name = "restaurant")
 public class Restaurant extends NamedEntity {
 
-    @OneToOne(mappedBy = "restaurant")
-    private Menu todayMenu;
+    @OneToMany(mappedBy = "restaurant")
+    private List<Menu> menus;
 }

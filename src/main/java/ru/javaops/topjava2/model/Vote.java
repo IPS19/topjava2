@@ -9,18 +9,17 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "vote", uniqueConstraints = {@UniqueConstraint(name = "UK_one_vote_per_user_per_day", columnNames = {"date", "user_id", "restautant_id"})})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Vote {
+public class Vote extends BaseEntity {
 
-    @Id
     @Column(name = "date")
-    Date date;
+    LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
