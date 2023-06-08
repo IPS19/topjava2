@@ -3,6 +3,7 @@ package ru.javaops.topjava2.web.restaurant;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,21 +11,49 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
+import ru.javaops.topjava2.to.MenuTo;
+import ru.javaops.topjava2.util.MenuUtil;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
 @RestController
-@RequestMapping(value = UserRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
-public class AdminRestaurantController {
+public class AdminRestaurantController extends AbstractRestaurantController {
 
     static final String REST_URL = "/api/admin/restaurants";
 
     private final RestaurantRepository repository;
+
+    @GetMapping
+    public List<Restaurant> getAll() {
+        return super.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Restaurant> get(@PathVariable int id) {
+        return ResponseEntity.of(Optional.of(super.getById(id)));
+    }
+
+    //http://localhost:8080/api/admin/restaurants/1/with-menu?date=2023-05-31
+//https://www.baeldung.com/spring-request-param#:~:text=Using%20Java%208%20Optional
+    @GetMapping("/{id}/with-menu")
+    public ResponseEntity<Restaurant> getWithMenuByIdDate(@PathVariable int id,
+                                                          @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
+        return ResponseEntity.of(super.getWithMenuByDate(id, date.orElseGet(LocalDate::now)));
+    }
+
+    @GetMapping("/all-with-menu")
+    public List<Restaurant> getAllWithMenuByDate(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
+        return super.getAllWithMenuByDate(date.orElseGet(LocalDate::now));
+    }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
@@ -47,9 +76,6 @@ public class AdminRestaurantController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
-        log.info("delete restaurant with id {}", id);
-        Restaurant restaurant = repository.getExisted(id);
-        repository.delete(restaurant);
+        super.delete(id);
     }
-
 }

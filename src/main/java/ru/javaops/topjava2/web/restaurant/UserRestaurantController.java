@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.javaops.topjava2.model.Restaurant;
-import ru.javaops.topjava2.repository.RestaurantRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,33 +18,26 @@ import java.util.Optional;
 @RequestMapping(value = UserRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
-public class UserRestaurantController {
+public class UserRestaurantController extends AbstractRestaurantController {
     static final String REST_URL = "/api/user/restaurants";
-
-    private final RestaurantRepository repository;
 
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> get(@PathVariable int id) {
-        log.info("get restaurant with id {}", id);
-        return ResponseEntity.of(Optional.of(repository.getExisted(id)));
+        return ResponseEntity.of(Optional.of(super.getById(id)));
     }
 
     @GetMapping
     public List<Restaurant> getAll() {
-        log.info("getAll restaurants");
-        return repository.findAll();
+        return super.getAll();
     }
 
     @GetMapping("/all-with-menu")
-    public List<Restaurant> getAllWithMenu() {
-        log.info("getAll restaurants with menu");
-        return repository.getAllWithMenuByDate(LocalDate.now());
+    public List<Restaurant> getAllWithTodayMenu() {
+        return super.getAllWithMenuByDate(LocalDate.now());
     }
 
     @GetMapping("/{id}/with-menu")
     public ResponseEntity<Restaurant> getWithTodayMenu(@PathVariable int id) {
-        log.info("get restaurant {} with menu", id);
-        return ResponseEntity.of(repository.getWithMenuByDate(id, LocalDate.now()));
+        return ResponseEntity.of(super.getWithMenuByDate(id, LocalDate.now()));
     }
-
 }

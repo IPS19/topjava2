@@ -1,12 +1,10 @@
 package ru.javaops.topjava2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -18,8 +16,10 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Menu extends BaseEntity {
 
+    //https://stackoverflow.com/questions/7695831/how-can-i-cascade-delete-a-collection-which-is-part-of-a-jpa-entity/62848296#62848296:~:text=%40JoinColumn().-,Follow%2Dup%20example%3A,-%40Entity%0Apublic%20class
     @ElementCollection(fetch = FetchType.EAGER)//???
     @CollectionTable(name = "menu_items", joinColumns = @JoinColumn(name = "menu_id"))//???
 // ↑choose the name of the DB table storing the Map<>↑
@@ -39,6 +39,13 @@ public class Menu extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     @NotNull
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     Restaurant restaurant;
+
+    public Menu(Integer id, Map<String, Integer> items, LocalDate date) {
+        super(id);
+        this.items = items;
+        this.date = date;
+    }
 }

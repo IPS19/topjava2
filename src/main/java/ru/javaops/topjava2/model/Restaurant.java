@@ -1,6 +1,7 @@
 package ru.javaops.topjava2.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -17,6 +18,6 @@ import java.util.List;
 @Table(name = "restaurant")
 public class Restaurant extends NamedEntity {
 
-    @OneToMany(mappedBy = "restaurant")
+    @OneToMany(mappedBy = "restaurant", fetch = FetchType.EAGER)
     private List<Menu> menus;
 }
