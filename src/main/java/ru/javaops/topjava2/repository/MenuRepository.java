@@ -15,8 +15,4 @@ public interface MenuRepository extends BaseRepository<Menu> {
 
     @Query("SELECT m FROM Menu m WHERE m.restaurant.id=?1 and m.date=?2")
     Optional<Menu> getMenuByIdAndDate(int id, LocalDate date);
-
-    @Transactional
-    @Query("UPDATE Menu m SET m=?1 WHERE m.restaurant.id=?2 and m.date=?3")
-    void updateMenu(Menu menu, int id, LocalDate date);
 }

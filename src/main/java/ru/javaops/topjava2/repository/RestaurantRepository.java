@@ -14,4 +14,7 @@ public interface RestaurantRepository extends BaseRepository<Restaurant> {
 
     @Query("SELECT r FROM Restaurant r LEFT JOIN FETCH r.menus m WHERE m.date=?1")
     List<Restaurant> getAllWithMenuByDate(LocalDate date);
+
+    @Query("SELECT r FROM Restaurant r WHERE r.menus=null")
+    Optional<List<Restaurant>> getAllWithNullMenu();
 }

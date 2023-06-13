@@ -1,7 +1,7 @@
 package ru.javaops.topjava2.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -18,6 +18,7 @@ import java.util.List;
 @Table(name = "restaurant")
 public class Restaurant extends NamedEntity {
 
-    @OneToMany(mappedBy = "restaurant", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "restaurant")
+    @JsonManagedReference
     private List<Menu> menus;
 }

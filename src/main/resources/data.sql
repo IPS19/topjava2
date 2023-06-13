@@ -21,7 +21,7 @@ VALUES (current_date, 1),   /*1*/
        ('2021-05-05', 2),    /*5*/
        ('2021-05-05', 3);    /*6*/
 
-INSERT INTO menu_items (menu_id, price, item)
+INSERT INTO menu_item (menu_id, price, item)
 VALUES (1, 100, 'burgers'),
        (1, 120, 'middle burgers'),
        (1, 150, 'big burgers'),

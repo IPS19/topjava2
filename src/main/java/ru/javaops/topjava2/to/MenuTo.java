@@ -5,8 +5,9 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Value;
+import ru.javaops.topjava2.model.MenuItem;
 
-import java.util.Map;
+import java.util.Set;
 
 @Value
 @AllArgsConstructor
@@ -14,5 +15,5 @@ import java.util.Map;
 public class MenuTo {
     @Size(min = 2, max = 5)
     @NotNull
-    Map<String, Integer> items;
+    Set<MenuItem> items;
 }

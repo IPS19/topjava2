@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
-import ru.javaops.topjava2.to.MenuTo;
-import ru.javaops.topjava2.util.MenuUtil;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -47,11 +45,13 @@ public class AdminRestaurantController extends AbstractRestaurantController {
     @GetMapping("/{id}/with-menu")
     public ResponseEntity<Restaurant> getWithMenuByIdDate(@PathVariable int id,
                                                           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
+        log.info("get {} with menu on {}", id, date);
         return ResponseEntity.of(super.getWithMenuByDate(id, date.orElseGet(LocalDate::now)));
     }
 
     @GetMapping("/all-with-menu")
     public List<Restaurant> getAllWithMenuByDate(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
+        log.info("get all with menu on {}", date);
         return super.getAllWithMenuByDate(date.orElseGet(LocalDate::now));
     }
 
@@ -73,9 +73,16 @@ public class AdminRestaurantController extends AbstractRestaurantController {
         return ResponseEntity.created(uriOfNewResource).body(newRestaurant);
     }
 
+    @GetMapping("/all-empty")
+    public List<Restaurant> getWithEmptyMenu() {
+        log.info("get all with empty menu");
+        return repository.getAllWithNullMenu().orElseThrow();//кинуть другое
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
+        log.info("delete restaurant{}", id);
         super.delete(id);
     }
 }
