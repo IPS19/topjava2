@@ -1,7 +1,6 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,7 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.Map;
 
 @Entity
 @Table(name = "menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"date", "restaurant_id", "id"}, name = "uk_restaurant_date_menu")})
@@ -20,12 +19,15 @@ import java.util.Set;
 @AllArgsConstructor
 public class Menu extends BaseEntity {
 
-    @OneToMany(mappedBy = "menu", fetch = FetchType.EAGER)
-    @Size(min = 2, max = 5)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "menu_items", joinColumns = @JoinColumn(name = "menu_id"))
+    @MapKeyColumn(name = "item")
+    @Column(name = "price")
+    @JoinColumn(name = "menu_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OrderBy("price DESC")
-    @JsonManagedReference
-    Set<MenuItem> items;
+    @Size(min = 2, max = 5)
+    @NotNull
+    Map<String, Integer> items;
 
     @Column(name = "date")
     @NotNull
@@ -33,12 +35,11 @@ public class Menu extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
-    @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     Restaurant restaurant;
 
-    public Menu(Integer id, Set<MenuItem> items, LocalDate date) {
+    public Menu(Integer id, @NotNull Map<String, Integer> items, @NotNull LocalDate date) {
         super(id);
         this.items = items;
         this.date = date;

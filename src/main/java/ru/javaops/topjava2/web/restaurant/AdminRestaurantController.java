@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 
@@ -44,18 +45,19 @@ public class AdminRestaurantController extends AbstractRestaurantController {
 //https://www.baeldung.com/spring-request-param#:~:text=Using%20Java%208%20Optional
     @GetMapping("/{id}/with-menu")
     public ResponseEntity<Restaurant> getWithMenuByIdDate(@PathVariable int id,
-                                                          @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
+                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
         log.info("get {} with menu on {}", id, date);
         return ResponseEntity.of(super.getWithMenuByDate(id, date.orElseGet(LocalDate::now)));
     }
 
     @GetMapping("/all-with-menu")
     public List<Restaurant> getAllWithMenuByDate(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
-        log.info("get all with menu on {}", date);
+        log.info("get all with menu on {}", date.orElseGet(LocalDate::now));
         return super.getAllWithMenuByDate(date.orElseGet(LocalDate::now));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update restaurant {}", id);
         assureIdConsistent(restaurant, id);
@@ -73,16 +75,16 @@ public class AdminRestaurantController extends AbstractRestaurantController {
         return ResponseEntity.created(uriOfNewResource).body(newRestaurant);
     }
 
-    @GetMapping("/all-empty")
+    @GetMapping("/all-empty-menu")
     public List<Restaurant> getWithEmptyMenu() {
         log.info("get all with empty menu");
-        return repository.getAllWithNullMenu().orElseThrow();//кинуть другое
+        return repository.getAllWithEmptyMenu().orElseThrow(() -> new NotFoundException("no restaurant without menu"));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
-        log.info("delete restaurant{}", id);
+        log.info("delete restaurant {}", id);
         super.delete(id);
     }
 }

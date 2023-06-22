@@ -4,16 +4,17 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
-import ru.javaops.topjava2.model.MenuItem;
 
-import java.util.Set;
+import java.util.Map;
 
 @Value
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class MenuTo {
     @Size(min = 2, max = 5)
     @NotNull
-    Set<MenuItem> items;
+    Map<String, Integer> items;
 }

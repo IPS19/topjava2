@@ -11,7 +11,8 @@ VALUES ('USER', 1),
 INSERT INTO restaurant (name)
 VALUES ('Tokio'),
        ('Ginza'),
-       ('Bahroma');
+       ('Bahroma'),
+       ('Without Menu');
 
 INSERT INTO menu (date, restaurant_id)
 VALUES (current_date, 1),   /*1*/
@@ -21,13 +22,15 @@ VALUES (current_date, 1),   /*1*/
        ('2021-05-05', 2),    /*5*/
        ('2021-05-05', 3);    /*6*/
 
-INSERT INTO menu_item (menu_id, price, item)
+INSERT INTO menu_items (menu_id, price, item)
 VALUES (1, 100, 'burgers'),
        (1, 120, 'middle burgers'),
        (1, 150, 'big burgers'),
+
        (2, 101, 'sushi'),
        (2, 121, 'middle sushi'),
        (2, 151, 'big sushi'),
+
        (3, 102, 'pizza'),
        (3, 122, 'middle pizza'),
        (3, 152, 'big pizza'),
@@ -35,9 +38,11 @@ VALUES (1, 100, 'burgers'),
        (4, 152, 'restaurant_1 old menu item'),
        (4, 152, 'restaurant_1 old menu item2'),
        (4, 152, 'restaurant_1 old menu item3'),
+
        (5, 152, 'restaurant_2 old menu item'),
        (5, 152, 'restaurant_2 old menu item2'),
        (5, 152, 'restaurant_2 old menu item3'),
+
        (6, 152, 'restaurant_3 old menu item'),
        (6, 152, 'restaurant_3 old menu item2'),
        (6, 152, 'restaurant_3 old menu item3');

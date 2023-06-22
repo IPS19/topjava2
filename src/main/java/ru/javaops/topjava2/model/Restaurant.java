@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -19,6 +21,11 @@ import java.util.List;
 public class Restaurant extends NamedEntity {
 
     @OneToMany(mappedBy = "restaurant")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonManagedReference
     private List<Menu> menus;
+
+    public Restaurant(Integer id, String name) {
+        super(id, name);
+    }
 }

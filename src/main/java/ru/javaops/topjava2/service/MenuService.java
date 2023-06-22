@@ -15,7 +15,7 @@ public class MenuService {
 
     @Transactional
     public Menu save(Menu menu, int restaurantId) {
-        menu.setRestaurant(restaurantRepository.getExisted(restaurantId));
+        menu.setRestaurant(restaurantRepository.getReferenceById(restaurantId));
         return menuRepository.save(menu);
     }
 }
