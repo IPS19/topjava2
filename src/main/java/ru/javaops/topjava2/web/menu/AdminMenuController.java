@@ -23,19 +23,19 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 public class AdminMenuController {
-    static final String REST_URL = "/api/admin/menus";
+    static final String REST_URL = "/api/admin/menus/restaurants";
 
     private final MenuRepository repository;
     private final MenuService service;
 
-    @PostMapping(value = "/restaurant/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Menu addToday(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
         log.info("add menu for restaurant {}", restaurantId);
         Menu menu = MenuUtil.createTodayNewFromTo(menuTo);
         return service.save(menu, restaurantId);
     }
 
-    @PutMapping(value = "/restaurant/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateToday(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
         log.info("update menu for restaurant {}", restaurantId);
         Menu menu = MenuUtil.createTodayNewFromTo(menuTo);
@@ -43,13 +43,13 @@ public class AdminMenuController {
         service.save(menu, restaurantId);
     }
 
-    @GetMapping("/restaurant/{id}/all")
-    public List<Menu> getRestaurantMenusHistory(@PathVariable int id) {
+    @GetMapping("/{id}/all")
+    public List<MenuTo> getRestaurantMenusHistory(@PathVariable int id) {
         log.info("get all menus from restaurant {}", id);
-        return repository.getAllByRestaurantId(id);
+        return MenuUtil.createTosFromMenu(repository.getAllByRestaurantId(id));
     }
 
-    @GetMapping("/restaurant/{id}")
+    @GetMapping("/{id}")
     public Menu getByIdAndDate(@PathVariable int id,
                                @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
         log.info("get today menu for restaurant {}", id);
@@ -57,7 +57,7 @@ public class AdminMenuController {
                 .orElseThrow(() -> new NotFoundException("Restaurant " + id + " has no menu on" + date));
     }
 
-    @DeleteMapping("restaurant/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteByIdDate(@PathVariable int id, @RequestParam(required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {

@@ -41,18 +41,16 @@ public class AdminRestaurantController extends AbstractRestaurantController {
         return ResponseEntity.of(Optional.of(super.getById(id)));
     }
 
-    //http://localhost:8080/api/admin/restaurants/1/with-menu?date=2023-05-31
-//https://www.baeldung.com/spring-request-param#:~:text=Using%20Java%208%20Optional
+    //https://www.baeldung.com/spring-request-param#:~:text=Using%20Java%208%20Optional
     @GetMapping("/{id}/with-menu")
-    public ResponseEntity<Restaurant> getWithMenuByIdDate(@PathVariable int id,
-                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
-        log.info("get {} with menu on {}", id, date);
+    public ResponseEntity<Restaurant> getWithMenuByIdDate(@PathVariable int id, @RequestParam(required = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
         return ResponseEntity.of(super.getWithMenuByDate(id, date.orElseGet(LocalDate::now)));
     }
 
     @GetMapping("/all-with-menu")
-    public List<Restaurant> getAllWithMenuByDate(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
-        log.info("get all with menu on {}", date.orElseGet(LocalDate::now));
+    public List<Restaurant> getAllWithMenuByDate(@RequestParam(required = false)
+                                                 @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
         return super.getAllWithMenuByDate(date.orElseGet(LocalDate::now));
     }
 
@@ -84,7 +82,6 @@ public class AdminRestaurantController extends AbstractRestaurantController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
-        log.info("delete restaurant {}", id);
         super.delete(id);
     }
 }

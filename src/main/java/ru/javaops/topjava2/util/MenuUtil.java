@@ -5,6 +5,8 @@ import ru.javaops.topjava2.model.Menu;
 import ru.javaops.topjava2.to.MenuTo;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class MenuUtil {
@@ -13,6 +15,10 @@ public class MenuUtil {
     }
 
     public static MenuTo createToFromMenu(Menu menu) {
-        return new MenuTo(menu.getItems());
+        return new MenuTo(menu.getItems(), menu.getDate());
+    }
+
+    public static List<MenuTo> createTosFromMenu(List<Menu> menus) {
+        return menus.stream().map(MenuUtil::createToFromMenu).collect(Collectors.toList());
     }
 }

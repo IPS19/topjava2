@@ -34,7 +34,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void addToday() throws Exception {
         MenuTo newMenuTo = MenuTestData.getNew();
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "restaurant/4")
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "4")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newMenuTo)));
         Menu created = MENU_MATCHER.readFromJson(action);
@@ -49,7 +49,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void addTodayNotValid() throws Exception {
         MenuTo newMenuTo = MenuTestData.getNotValid();
-        perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "restaurant/4")
+        perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "4")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newMenuTo)))
                 .andDo(print())
@@ -62,7 +62,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
         MenuTo newMenuTo = MenuTestData.getNew();
         Menu updated = MenuUtil.createTodayNewFromTo(newMenuTo);
         updated.setId(MENU1_ID);
-        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + "restaurant/1").contentType(MediaType.APPLICATION_JSON)
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + "1").contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isOk());
 
@@ -72,17 +72,17 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getRestaurantMenusHistory() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "restaurant/1/all"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "1/all"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MENU_MATCHER.contentJson(List.of(menu1, oldMenu1)));
+                .andExpect(MENU_TO_MATCHER.contentJson(List.of(menuTo1, oldMenuTo1)));
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getByIdAndDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "restaurant/2?date=2021-05-05"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "2?date=2021-05-05"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -92,7 +92,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getTodayById() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "restaurant/2"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "2"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -102,7 +102,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void deleteByIdDate() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + "restaurant/3"))
+        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + "3"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(repository.getByRestaurantIdAndDate(3, LocalDate.now()).isPresent());

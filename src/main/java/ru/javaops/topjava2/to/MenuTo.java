@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Value;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 @Value
@@ -17,4 +18,7 @@ public class MenuTo {
     @Size(min = 2, max = 5)
     @NotNull
     Map<String, Integer> items;
+
+    @NotNull
+    LocalDate date;
 }
