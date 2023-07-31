@@ -1,7 +1,8 @@
 package ru.javaops.topjava2.web.restaurant;
 
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 
@@ -9,11 +10,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
+@Slf4j
 public abstract class AbstractRestaurantController {
-
-    protected final Logger log = getLogger(getClass());
 
     @Autowired
     protected RestaurantRepository repository;
@@ -30,13 +28,13 @@ public abstract class AbstractRestaurantController {
 
     public Optional<Restaurant> getWithMenuByDate(int id, LocalDate date) {
         log.info("get restaurant {} with menu on {}", id, date);
-        return repository.getWithMenuByDate(id, date);
+        return Optional.of(repository.getWithMenuByDate(id, date)
+                .orElseThrow(() -> new NotFoundException("restaurant or restaurant's menu on date " + date + " not found")));
     }
 
     public List<Restaurant> getAllWithMenuByDate(LocalDate date) {
         log.info("get all restaurant with menu on {}", date);
         return repository.getAllWithMenuByDate(date);
-
     }
 
     public void delete(int id) {

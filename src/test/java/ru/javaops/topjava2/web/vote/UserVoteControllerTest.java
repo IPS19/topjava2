@@ -30,6 +30,14 @@ class UserVoteControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
+    void voteForNotExist() throws Exception {
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + 15)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @WithUserDetails(value = USER4_MAIL)
     void getToday() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL))

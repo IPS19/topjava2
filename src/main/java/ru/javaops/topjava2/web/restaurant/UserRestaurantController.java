@@ -2,6 +2,7 @@ package ru.javaops.topjava2.web.restaurant;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,16 +28,19 @@ public class UserRestaurantController extends AbstractRestaurantController {
     }
 
     @GetMapping
+    @Cacheable("restaurants")
     public List<Restaurant> getAll() {
         return super.getAll();
     }
 
     @GetMapping("/all-with-menu")
+    @Cacheable("restaurantsWithMenu")
     public List<Restaurant> getAllWithTodayMenu() {
         return super.getAllWithMenuByDate(LocalDate.now());
     }
 
     @GetMapping("/{id}/with-menu")
+    @Cacheable("restaurantWithTodayMenu")
     public ResponseEntity<Restaurant> getWithTodayMenu(@PathVariable int id) {
         return ResponseEntity.of(super.getWithMenuByDate(id, LocalDate.now()));
     }

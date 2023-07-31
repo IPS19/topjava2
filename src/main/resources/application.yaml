@@ -6,7 +6,6 @@ spring:
     # https://stackoverflow.com/a/67678945/548473
     defer-datasource-initialization: true
     hibernate:
-      #автогенерация ddl
       ddl-auto: create-drop
     properties:
       #  http://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html#configurations

@@ -16,7 +16,6 @@ class AdminVoteControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL_SLASH = REST_URL + "/";
 
-
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getUsersVoteByDate() throws Exception {

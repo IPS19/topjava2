@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.to;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,6 @@ public class MenuTo {
     @NotNull
     Map<String, Integer> items;
 
-    @NotNull
+    @Nullable
     LocalDate date;
 }

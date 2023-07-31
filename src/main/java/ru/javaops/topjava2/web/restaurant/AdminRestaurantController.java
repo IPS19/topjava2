@@ -3,6 +3,8 @@ package ru.javaops.topjava2.web.restaurant;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +58,13 @@ public class AdminRestaurantController extends AbstractRestaurantController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "restaurants", allEntries = true),
+                    @CacheEvict(value = "restaurantsWithMenu", allEntries = true),
+                    @CacheEvict(value = "restaurantWithTodayMenu", key = "#id")
+            }
+    )
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update restaurant {}", id);
         assureIdConsistent(restaurant, id);
@@ -63,6 +72,7 @@ public class AdminRestaurantController extends AbstractRestaurantController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @CacheEvict(value = "restaurants", allEntries = true)
     public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
         log.info("create restaurant {}", restaurant);
         checkNew(restaurant);
@@ -81,6 +91,13 @@ public class AdminRestaurantController extends AbstractRestaurantController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "restaurants", allEntries = true),
+                    @CacheEvict(value = "restaurantWithTodayMenu", key = "#id"),
+                    @CacheEvict(value = "restaurantsWithMenu", allEntries = true)
+            }
+    )
     public void delete(@PathVariable int id) {
         super.delete(id);
     }
