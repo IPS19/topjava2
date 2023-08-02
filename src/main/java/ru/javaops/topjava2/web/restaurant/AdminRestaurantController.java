@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.restaurant;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,29 +34,36 @@ public class AdminRestaurantController extends AbstractRestaurantController {
 
     private final RestaurantRepository repository;
 
+    @Operation(summary = "get list of all restaurants")
     @GetMapping
     public List<Restaurant> getAll() {
         return super.getAll();
     }
 
+    @Operation(summary = "get restaurant by id")
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> get(@PathVariable int id) {
         return ResponseEntity.of(Optional.of(super.getById(id)));
     }
 
     //https://www.baeldung.com/spring-request-param#:~:text=Using%20Java%208%20Optional
+    @Operation(summary = "get restaurant with menu by id and date",
+            description = "example: /api/admin/restaurants/2?date=2021-05-05, if url has no parameter - will substitute today date")
     @GetMapping("/{id}/with-menu")
     public ResponseEntity<Restaurant> getWithMenuByIdDate(@PathVariable int id, @RequestParam(required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
         return ResponseEntity.of(super.getWithMenuByDate(id, date.orElseGet(LocalDate::now)));
     }
 
+    @Operation(summary = "get restaurant with menu by id and date",
+            description = "example: /api/admin/restaurants/2?date=2021-05-05/all-with-menu, if url has no parameter - will substitute today date")
     @GetMapping("/all-with-menu")
     public List<Restaurant> getAllWithMenuByDate(@RequestParam(required = false)
                                                  @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
         return super.getAllWithMenuByDate(date.orElseGet(LocalDate::now));
     }
 
+    @Operation(summary = "update restaurant")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Caching(
@@ -71,6 +79,7 @@ public class AdminRestaurantController extends AbstractRestaurantController {
         repository.save(restaurant);
     }
 
+    @Operation(summary = "create new restaurant")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(value = "restaurants", allEntries = true)
     public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
@@ -83,12 +92,14 @@ public class AdminRestaurantController extends AbstractRestaurantController {
         return ResponseEntity.created(uriOfNewResource).body(newRestaurant);
     }
 
+    @Operation(summary = "get list of restaurants with empty menu")
     @GetMapping("/all-empty-menu")
     public List<Restaurant> getWithEmptyMenu() {
         log.info("get all with empty menu");
         return repository.getAllWithEmptyMenu().orElseThrow(() -> new NotFoundException("no restaurant without menu"));
     }
 
+    @Operation(summary = "delete restaurant by id")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Caching(

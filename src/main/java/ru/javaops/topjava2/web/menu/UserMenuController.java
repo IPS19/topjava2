@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.menu;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,6 +24,7 @@ public class UserMenuController {
 
     MenuRepository repository;
 
+    @Operation(summary = "get today menu by restaurant id")
     @GetMapping("/{restaurantId}")
     @Cacheable(value = "menus")
     public ResponseEntity<Menu> getTodayByRestaurantId(@PathVariable int restaurantId) {

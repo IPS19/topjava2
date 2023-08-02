@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.restaurant;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,23 +23,27 @@ import java.util.Optional;
 public class UserRestaurantController extends AbstractRestaurantController {
     static final String REST_URL = "/api/user/restaurants";
 
+    @Operation(summary = "get restaurant by id")
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> get(@PathVariable int id) {
         return ResponseEntity.of(Optional.of(super.getById(id)));
     }
 
+    @Operation(summary = "get list of all restaurants")
     @GetMapping
     @Cacheable("restaurants")
     public List<Restaurant> getAll() {
         return super.getAll();
     }
 
+    @Operation(summary = "get list of all restaurants with its menus")
     @GetMapping("/all-with-menu")
     @Cacheable("restaurantsWithMenu")
     public List<Restaurant> getAllWithTodayMenu() {
         return super.getAllWithMenuByDate(LocalDate.now());
     }
 
+    @Operation(summary = "get restaurant with menu")
     @GetMapping("/{id}/with-menu")
     @Cacheable("restaurantWithTodayMenu")
     public ResponseEntity<Restaurant> getWithTodayMenu(@PathVariable int id) {

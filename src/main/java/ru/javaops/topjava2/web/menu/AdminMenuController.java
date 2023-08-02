@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.menu;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class AdminMenuController {
     private final MenuRepository repository;
     private final MenuService service;
 
+    @Operation(summary = "add today restaurant menu")
     @PostMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @CachePut("menus")
     public Menu addToday(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
@@ -39,6 +41,7 @@ public class AdminMenuController {
         return service.save(menu, restaurantId);
     }
 
+    @Operation(summary = "update today restaurant menu")
     @PutMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Caching(
             evict = {
@@ -50,16 +53,21 @@ public class AdminMenuController {
     public void updateToday(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
         log.info("update menu for restaurant {}", restaurantId);
         Menu menu = MenuUtil.createTodayNewFromTo(menuTo);
-        menu.setId(repository.getByRestaurantIdAndDate(restaurantId, LocalDate.now()).orElseThrow().id());
+        menu.setId(repository.getByRestaurantIdAndDate(restaurantId, LocalDate.now()).orElseThrow(
+                () -> new NotFoundException("restaurant " + restaurantId + "is not exist or doesn't have today menu")
+        ).id());
         service.save(menu, restaurantId);
     }
 
+    @Operation(summary = "get menu history by restaurant id")
     @GetMapping("/{restaurantId}/all")
     public List<MenuTo> getRestaurantMenusHistory(@PathVariable int restaurantId) {
         log.info("get all menus from restaurant {}", restaurantId);
         return MenuUtil.createTosFromMenu(repository.getAllByRestaurantId(restaurantId));
     }
 
+    @Operation(summary = "get menu of restaurant on a specific date by id",
+            description = "example: /api/admin/restaurant-menus/2?date=2021-05-05, if url has no parameter - will substitute today date")
     @GetMapping("/{restaurantId}")
     public Menu getByIdAndDate(@PathVariable int restaurantId,
                                @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
@@ -68,6 +76,8 @@ public class AdminMenuController {
                 .orElseThrow(() -> new NotFoundException("Restaurant " + restaurantId + " has no menu on" + date));
     }
 
+    @Operation(summary = "delete menu of restaurant on a specific date by id",
+            description = "example: /api/admin/restaurant-menus/2?date=2021-05-05, if url has no parameter - will delete today menu")
     @DeleteMapping("/{restaurantId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Caching(

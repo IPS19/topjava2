@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.vote;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -28,6 +29,7 @@ public class UserVoteController {
 
     private final RestaurantRepository restaurantRepository;
 
+    @Operation(summary = "make vote for restaurant by it's id")
     @PutMapping(value = "/{id}")
     public VoteTo vote(@PathVariable int id) {
         Optional<Vote> voteFromBase = repository.getByUserAndDate(AuthUser.authUser(), LocalDate.now());
@@ -45,6 +47,7 @@ public class UserVoteController {
                 repository.save(new Vote(LocalDate.now(), AuthUser.authUser(), restaurant)).getRestaurant().id());
     }
 
+    @Operation(summary = "get id of restaurant that was voted")
     @GetMapping
     public VoteTo getToday() {
         return new VoteTo(repository.getVotedRestaurantByDate(AuthUser.authUser(), LocalDate.now())
