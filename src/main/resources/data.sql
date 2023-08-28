@@ -20,7 +20,7 @@ VALUES ('Tokio'),
        ('Bahroma'),
        ('Without Menu');
 
-INSERT INTO menu (date, restaurant_id)
+INSERT INTO menu (menu_date, restaurant_id)
 VALUES (current_date, 1), /*1*/
        (current_date, 2), /*2*/
        (current_date, 3), /*3*/
@@ -28,7 +28,7 @@ VALUES (current_date, 1), /*1*/
        ('2021-05-05', 2), /*5*/
        ('2021-05-05', 3); /*6*/
 
-INSERT INTO menu_items (menu_id, price, item)
+INSERT INTO dish_item (menu_id, price, dish_name)
 VALUES (1, 100, 'burgers'),
        (1, 120, 'middle burgers'),
        (1, 150, 'big burgers'),
@@ -48,7 +48,7 @@ VALUES (1, 100, 'burgers'),
        (6, 152, 'restaurant_3 old menu item2'),
        (6, 152, 'restaurant_3 old menu item3');
 
-INSERT INTO vote (date, user_id, restaurant_id)
+INSERT INTO vote (vote_date, user_id, restaurant_id)
 VALUES (current_date, 4, 1), /*1*/
        (current_date, 5, 2), /*2*/
        (current_date, 6, 2), /*3*/

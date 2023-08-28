@@ -83,6 +83,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+<!--        https://frontbackend.com/java/how-to-mock-static-methods-with-mockito#:~:text=To%20make%20this%20possible%2C%20a%20single%20dependency%20had%20to%20be%20added%20to%20the%20pom.xml%20file%3A-->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
