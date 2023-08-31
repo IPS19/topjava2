@@ -6,18 +6,17 @@ import com.github.IPS19.restaurant_voting_app.to.DishItemTo;
 import com.github.IPS19.restaurant_voting_app.to.MenuTo;
 import lombok.experimental.UtilityClass;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @UtilityClass
 public class MenuUtil {
     public static Menu createTodayNewFromTo(MenuTo menuTo) {
-        return new Menu(null, createDishItemsFromToS(menuTo.getItems()), LocalDate.now());
+        return new Menu(null, createDishItemsFromToS(menuTo.getItems()), menuTo.getDate());
     }
 
     public static MenuTo createToFromMenu(Menu menu) {
-        return new MenuTo(createDishToS(menu.getItems()), menu.getDate());
+        return new MenuTo(menu.getId(), createDishToS(menu.getItems()), menu.getDate());
     }
 
     public static List<DishItem> createDishItemsFromToS(List<DishItemTo> dishItemTos) {
@@ -32,7 +31,7 @@ public class MenuUtil {
                 .collect(Collectors.toList());
     }
 
-    public static List<MenuTo> createTosFromMenu(List<Menu> menus) {
+    public static List<MenuTo> createTosFromMenus(List<Menu> menus) {
         return menus.stream()
                 .map(MenuUtil::createToFromMenu)
                 .collect(Collectors.toList());

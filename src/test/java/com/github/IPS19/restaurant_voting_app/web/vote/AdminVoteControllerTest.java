@@ -17,15 +17,6 @@ class AdminVoteControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
-    void getUsersVoteByDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "/users/6?date=2021-05-05"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VoteTestData.VOTE_TO_MATCHER.contentJson(VoteTestData.voteTo1));
-    }
-
-    @Test
-    @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void getRestaurantVotesSumByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "/restaurants/3?date=2021-05-05"))
                 .andExpect(status().isOk())

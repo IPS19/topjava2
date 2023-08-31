@@ -4,6 +4,7 @@ import com.github.IPS19.restaurant_voting_app.model.Restaurant;
 import com.github.IPS19.restaurant_voting_app.repository.RestaurantRepository;
 import com.github.IPS19.restaurant_voting_app.util.JsonUtil;
 import com.github.IPS19.restaurant_voting_app.web.AbstractControllerTest;
+import com.github.IPS19.restaurant_voting_app.web.menu.MenuTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
+import static com.github.IPS19.restaurant_voting_app.web.menu.MenuTestData.MENU1_ID;
 import static com.github.IPS19.restaurant_voting_app.web.restaurant.AdminRestaurantController.REST_URL;
 import static com.github.IPS19.restaurant_voting_app.web.user.UserTestData.ADMIN_MAIL;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,7 +41,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getWithEmptyMenu() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "all-empty-menu"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "empty-menu"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(RestaurantTestData.RESTAURANT_MATCHER.contentJson(List.of(RestaurantTestData.WITHOUT_MENU)));
@@ -58,11 +60,21 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getWithTodayMenu() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + RestaurantTestData.RESTAURANT1_ID + "/with-menu"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + RestaurantTestData.RESTAURANT1_ID + "/menu"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(RestaurantTestData.RESTAURANT_WITH_MENU_MATCHER.contentJson(RestaurantTestData.restaurant1));
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void getRestaurantMenusHistory() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + MENU1_ID + "/menus"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MenuTestData.MENU_TO_MATCHER.contentJson(List.of(MenuTestData.menuTo1, MenuTestData.oldMenuTo1)));
     }
 
     @Test

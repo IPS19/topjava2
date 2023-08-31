@@ -25,9 +25,10 @@ public class Menu extends BaseEntity {
     @CollectionTable(name = "dish_item")
     @JoinColumn(name = "menu_id", referencedColumnName = "id")
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<DishItem> items;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference

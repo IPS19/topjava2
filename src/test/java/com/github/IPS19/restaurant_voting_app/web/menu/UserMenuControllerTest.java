@@ -1,6 +1,7 @@
 package com.github.IPS19.restaurant_voting_app.web.menu;
 
 import com.github.IPS19.restaurant_voting_app.web.AbstractControllerTest;
+import com.github.IPS19.restaurant_voting_app.web.restaurant.RestaurantTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -13,13 +14,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class UserMenuControllerTest extends AbstractControllerTest {
 
+    private static final String REST_URL_SLASH = UserMenuController.REST_URL + "/";
+
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void getTodayByRestaurantId() throws Exception {
-        perform(MockMvcRequestBuilders.get(UserMenuController.REST_URL + "/2"))
+    void getAllTodayMenus() throws Exception {
+        perform(MockMvcRequestBuilders.get(UserMenuController.REST_URL))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MenuTestData.MENU_MATCHER.contentJson(MenuTestData.menu2));
+                .andExpect(MenuTestData.MENU_TO_MATCHER
+                        .contentJson(MenuTestData.menuTo1, MenuTestData.menuTo2, MenuTestData.menuTo3));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getRestaurantByMenuId() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + MenuTestData.MENU1_ID + "/restaurant"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(RestaurantTestData.RESTAURANT_TO_MATCHER
+                        .contentJson(RestaurantTestData.restaurantTo1));
     }
 }

@@ -5,18 +5,22 @@ import com.github.IPS19.restaurant_voting_app.model.Restaurant;
 import com.github.IPS19.restaurant_voting_app.model.Vote;
 import com.github.IPS19.restaurant_voting_app.repository.RestaurantRepository;
 import com.github.IPS19.restaurant_voting_app.repository.VoteRepository;
+import com.github.IPS19.restaurant_voting_app.to.VoteRespTo;
 import com.github.IPS19.restaurant_voting_app.to.VoteTo;
 import com.github.IPS19.restaurant_voting_app.util.OptionalExceptionUtil;
+import com.github.IPS19.restaurant_voting_app.util.VoteUtil;
 import com.github.IPS19.restaurant_voting_app.web.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -25,15 +29,21 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserVoteController {
     static final String REST_URL = "/api/user/votes";
-
     private final VoteRepository repository;
 
     private final RestaurantRepository restaurantRepository;
 
     public static final LocalTime FORBIDDEN_TO_REVOTE_AFTER = LocalTime.of(11, 0);
 
+    @Operation(summary = "get all")
+    @GetMapping
+    public List<VoteRespTo> getAllUsersVotes() {
+        return VoteUtil.createRespTos(repository.getUsersVotes(AuthUser.authUser()).orElseGet(List::of));
+    }
+
+    @Transactional
     @Operation(summary = "make vote for restaurant by it's id")
-    @PostMapping(value = "/{id}")
+    @PostMapping(value = "/today/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public VoteTo vote(@PathVariable int id) {
         Restaurant restaurant = restaurantRepository.getExisted(id);
@@ -41,8 +51,9 @@ public class UserVoteController {
                 repository.save(new Vote(LocalDate.now(), AuthUser.authUser(), restaurant)).getRestaurant().id());
     }
 
+    @Transactional
     @Operation(summary = "revote for restaurant by it's id - only before 11 A.M.")
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/today/{id}")
     public VoteTo reVote(@PathVariable int id) {
         Optional<Vote> voteFromBase = repository.getByUserAndDate(AuthUser.authUser(), LocalDate.now());
         Restaurant restaurant = restaurantRepository.getExisted(id);
@@ -60,7 +71,7 @@ public class UserVoteController {
     }
 
     @Operation(summary = "get id of restaurant that was voted")
-    @GetMapping
+    @GetMapping("/today")
     public VoteTo getToday() {
         return new VoteTo(OptionalExceptionUtil
                 .getOrThrow(repository.getVotedRestaurantByDate(AuthUser.authUser(), LocalDate.now()), "no vote today")

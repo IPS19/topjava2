@@ -1,6 +1,7 @@
 package com.github.IPS19.restaurant_voting_app.repository;
 
 import com.github.IPS19.restaurant_voting_app.model.Menu;
+import com.github.IPS19.restaurant_voting_app.model.Restaurant;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,4 +16,10 @@ public interface MenuRepository extends BaseRepository<Menu> {
 
     @Query("SELECT m FROM Menu m LEFT JOIN FETCH m.items WHERE m.restaurant.id=?1 AND m.date=?2")
     Optional<Menu> getByRestaurantIdAndDate(int id, LocalDate date);
+
+    @Query("SELECT m FROM Menu m LEFT JOIN FETCH m.items WHERE m.date=:date")
+    Optional<List<Menu>> getAllByDate(LocalDate date);
+
+    @Query("SELECT m.restaurant FROM Menu m WHERE m.id=:id")
+    Optional<Restaurant> getRestaurantByMenuId(int id);
 }

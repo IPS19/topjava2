@@ -4,7 +4,9 @@ import com.github.IPS19.restaurant_voting_app.model.Restaurant;
 import com.github.IPS19.restaurant_voting_app.repository.MenuRepository;
 import com.github.IPS19.restaurant_voting_app.repository.RestaurantRepository;
 import com.github.IPS19.restaurant_voting_app.to.MenuTo;
+import com.github.IPS19.restaurant_voting_app.to.RestaurantTo;
 import com.github.IPS19.restaurant_voting_app.util.MenuUtil;
+import com.github.IPS19.restaurant_voting_app.util.RestaurantUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -38,7 +41,6 @@ public class AdminRestaurantController extends AbstractRestaurantController {
 
     private final MenuRepository menuRepository;
 
-
     @Operation(summary = "get list of all restaurants")
     @GetMapping
     public List<Restaurant> getAll() {
@@ -55,7 +57,7 @@ public class AdminRestaurantController extends AbstractRestaurantController {
     @GetMapping("/{restaurantId}/menus")
     public List<MenuTo> getRestaurantMenusHistory(@PathVariable int restaurantId) {
         log.info("get all menus from restaurant {}", restaurantId);
-        return MenuUtil.createTosFromMenu(menuRepository.getAllByRestaurantId(restaurantId).orElseGet(List::of));
+        return MenuUtil.createTosFromMenus(menuRepository.getAllByRestaurantId(restaurantId).orElseGet(List::of));
     }
 
     //https://www.baeldung.com/spring-request-param#:~:text=Using%20Java%208%20Optional
@@ -75,6 +77,7 @@ public class AdminRestaurantController extends AbstractRestaurantController {
         return super.getAllWithMenuByDate(date.orElseGet(LocalDate::now));
     }
 
+    @Transactional
     @Operation(summary = "update restaurant")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -85,19 +88,20 @@ public class AdminRestaurantController extends AbstractRestaurantController {
                     @CacheEvict(value = "restaurantWithTodayMenu", key = "#id")
             }
     )
-    public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
+    public void update(@Valid @RequestBody RestaurantTo restaurantTo, @PathVariable int id) {
         log.info("update restaurant {}", id);
-        assureIdConsistent(restaurant, id);
-        repository.save(restaurant);
+        assureIdConsistent(restaurantTo, id);
+        repository.save(RestaurantUtil.createFromTo(restaurantTo));
     }
 
+    @Transactional
     @Operation(summary = "create new restaurant")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(value = "restaurants", allEntries = true)
-    public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
-        log.info("create restaurant {}", restaurant);
-        checkNew(restaurant);
-        Restaurant newRestaurant = repository.save(restaurant);
+    public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody RestaurantTo restaurantTo) {
+        checkNew(restaurantTo);
+        log.info("create restaurant {}", restaurantTo.getId());
+        Restaurant newRestaurant = repository.save(RestaurantUtil.createFromTo(restaurantTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(newRestaurant.getId()).toUri();
@@ -105,7 +109,7 @@ public class AdminRestaurantController extends AbstractRestaurantController {
     }
 
     @Operation(summary = "get list of restaurants with empty menu")
-    @GetMapping("/all-empty-menu")
+    @GetMapping("/empty-menu")
     public List<Restaurant> getWithEmptyMenu() {
         log.info("get all with empty menu");
         return repository.getAllWithEmptyMenu().orElseGet(List::of);

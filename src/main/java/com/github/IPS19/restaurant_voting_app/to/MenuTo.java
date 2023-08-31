@@ -1,10 +1,7 @@
 package com.github.IPS19.restaurant_voting_app.to;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,10 +9,18 @@ import java.util.List;
 @Value
 @Getter
 @RequiredArgsConstructor
-public class MenuTo {
+@NoArgsConstructor(force = true)
+@EqualsAndHashCode(callSuper = true)
+public class MenuTo extends BaseTo {
     @NotNull
     List<DishItemTo> items;
 
-    @Nullable
+    @NotNull
     LocalDate date;
+
+    public MenuTo(Integer id, List<DishItemTo> items, LocalDate date) {
+        super(id);
+        this.items = items;
+        this.date = date;
+    }
 }

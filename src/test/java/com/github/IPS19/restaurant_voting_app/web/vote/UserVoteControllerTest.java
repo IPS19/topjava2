@@ -22,13 +22,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class UserVoteControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL_SLASH = REST_URL + "/";
+    private static final String REST_URL_SLASH_TODAY = REST_URL + "/today";
 
     @Test
     @WithUserDetails(value = USER_MAIL)
     void vote() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL_SLASH + RESTAURANT1_ID))
-                .andExpect(status().isOk())
+        perform(MockMvcRequestBuilders.post(REST_URL_SLASH_TODAY + "/" + RESTAURANT1_ID))
+                .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.voteToTO(restaurant1)));
     }
@@ -40,7 +40,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
         LocalTime notForbiddenRevote = UserVoteController.FORBIDDEN_TO_REVOTE_AFTER.minusHours(1L);
         try (MockedStatic<LocalTime> theMock = Mockito.mockStatic(LocalTime.class)) {
             theMock.when(LocalTime::now).thenReturn(notForbiddenRevote);
-            perform(MockMvcRequestBuilders.post(REST_URL_SLASH + RESTAURANT1_ID))
+            perform(MockMvcRequestBuilders.post(REST_URL_SLASH_TODAY + "/" + RESTAURANT1_ID))
                     .andExpect(status().isCreated())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.voteToTO(restaurant1)));
@@ -48,7 +48,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
         LocalTime forbiddenToRevote = UserVoteController.FORBIDDEN_TO_REVOTE_AFTER.plusHours(1L);
         try (MockedStatic<LocalTime> theMock = Mockito.mockStatic(LocalTime.class)) {
             theMock.when(LocalTime::now).thenReturn(forbiddenToRevote);
-            perform(MockMvcRequestBuilders.post(REST_URL_SLASH + RESTAURANT1_ID))
+            perform(MockMvcRequestBuilders.post(REST_URL_SLASH_TODAY + "/" + RESTAURANT1_ID))
                     .andExpect(status().isConflict());
         }
     }
@@ -56,7 +56,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void voteForNotExist() throws Exception {
-        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + 15)
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH_TODAY + 15)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -64,7 +64,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER4_MAIL)
     void getToday() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH_TODAY))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.voteToTO(restaurant1)));

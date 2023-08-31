@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static com.github.IPS19.restaurant_voting_app.web.user.UserTestData.ADMIN_MAIL;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -59,16 +58,6 @@ class AdminMenuControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
-    void getRestaurantMenusHistory() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "1/all"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MenuTestData.MENU_TO_MATCHER.contentJson(List.of(MenuTestData.menuTo1, MenuTestData.oldMenuTo1)));
-    }
-
-    @Test
-    @WithUserDetails(value = ADMIN_MAIL)
     void getByIdAndDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "2?date=2021-05-05"))
                 .andExpect(status().isOk())
@@ -94,5 +83,15 @@ class AdminMenuControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(repository.getByRestaurantIdAndDate(3, LocalDate.now()).isPresent());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void getAllOnDate() throws Exception {
+        perform(MockMvcRequestBuilders.get(AdminMenuController.REST_URL + "?date=2021-05-05"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MenuTestData.MENU_TO_MATCHER.contentJson(MenuTestData.oldMenuTo1, MenuTestData.oldMenuTo2, MenuTestData.oldMenuTo3));
     }
 }

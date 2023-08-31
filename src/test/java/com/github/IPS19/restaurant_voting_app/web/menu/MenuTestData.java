@@ -36,8 +36,11 @@ public class MenuTestData {
             LocalDate.now());
 
     public static final MenuTo menuTo1 = MenuUtil.createToFromMenu(menu1);
-
+    public static final MenuTo menuTo2 = MenuUtil.createToFromMenu(menu2);
+    public static final MenuTo menuTo3 = MenuUtil.createToFromMenu(menu3);
     public static final MenuTo oldMenuTo1 = MenuUtil.createToFromMenu(oldMenu1);
+    public static final MenuTo oldMenuTo2 = MenuUtil.createToFromMenu(oldMenu2);
+    public static final MenuTo oldMenuTo3 = MenuUtil.createToFromMenu(oldMenu3);
 
     public static MenuTo getNew() {
         return new MenuTo(List.of(new DishItemTo(100, "new item1"), new DishItemTo(200, "new item2"),
