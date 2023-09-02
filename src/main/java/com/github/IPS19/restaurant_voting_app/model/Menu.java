@@ -8,7 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"menu_date", "restaurant_id"}, name = "uk_restaurant_date_menu")})
@@ -21,12 +21,12 @@ public class Menu extends BaseEntity {
     @NotNull
     private LocalDate date;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @CollectionTable(name = "dish_item")
     @JoinColumn(name = "menu_id", referencedColumnName = "id")
     @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<DishItem> items;
+    private Set<DishItem> items;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
@@ -35,7 +35,7 @@ public class Menu extends BaseEntity {
     @NotNull
     private Restaurant restaurant;
 
-    public Menu(Integer id, @NotNull List<DishItem> items, @NotNull LocalDate date) {
+    public Menu(Integer id, @NotNull Set<DishItem> items, @NotNull LocalDate date) {
         super(id);
         this.items = items;
         this.date = date;

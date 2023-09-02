@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 @Value
 @Getter
@@ -13,12 +13,12 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class MenuTo extends BaseTo {
     @NotNull
-    List<DishItemTo> items;
+    Set<DishItemTo> items;
 
     @NotNull
     LocalDate date;
 
-    public MenuTo(Integer id, List<DishItemTo> items, LocalDate date) {
+    public MenuTo(Integer id, Set<DishItemTo> items, LocalDate date) {
         super(id);
         this.items = items;
         this.date = date;

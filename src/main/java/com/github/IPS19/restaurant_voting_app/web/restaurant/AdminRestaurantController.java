@@ -71,7 +71,7 @@ public class AdminRestaurantController extends AbstractRestaurantController {
 
     @Operation(summary = "get restaurant with menu by id and date",
             description = "example: /api/admin/restaurants/2?date=2021-05-05/all-with-menu, if url has no parameter - will substitute today date")
-    @GetMapping("/all-with-menu")
+    @GetMapping("/with-menu")
     public List<Restaurant> getAllWithMenuByDate(@RequestParam(required = false)
                                                  @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
         return super.getAllWithMenuByDate(date.orElseGet(LocalDate::now));
@@ -121,6 +121,7 @@ public class AdminRestaurantController extends AbstractRestaurantController {
     @Caching(
             evict = {
                     @CacheEvict(value = "restaurants", allEntries = true),
+                    @CacheEvict(value = "menus", allEntries = true),
                     @CacheEvict(value = "restaurantWithTodayMenu", key = "#id"),
                     @CacheEvict(value = "restaurantsWithMenu", allEntries = true)
             }
