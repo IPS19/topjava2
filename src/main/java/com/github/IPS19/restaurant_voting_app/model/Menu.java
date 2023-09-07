@@ -21,7 +21,7 @@ public class Menu extends BaseEntity {
     @NotNull
     private LocalDate date;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "dish_item")
     @JoinColumn(name = "menu_id", referencedColumnName = "id")
     @NotNull

@@ -24,7 +24,7 @@ public class AdminVoteController {
     private final VoteRepository repository;
 
     @Operation(summary = "get sum of votes by restaurant's id and date",
-            description = "example: /api/admin/votes/3?date=2021-05-05, if url has no parameter - will substitute today date")
+            description = "example: /api/admin/votes/restaurants/3?date=2021-05-05, if url has no parameter - will substitute today date")
     @GetMapping("/restaurants/{id}")
     public int getRestaurantVotesSumByDate(@PathVariable int id,
                                            @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {

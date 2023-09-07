@@ -25,6 +25,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.github.IPS19.restaurant_voting_app.util.validation.ValidationUtil.assureIdConsistent;
 import static com.github.IPS19.restaurant_voting_app.util.validation.ValidationUtil.checkNew;
@@ -108,11 +109,16 @@ public class AdminRestaurantController extends AbstractRestaurantController {
         return ResponseEntity.created(uriOfNewResource).body(newRestaurant);
     }
 
-    @Operation(summary = "get list of restaurants with empty menu")
-    @GetMapping("/empty-menu")
-    public List<Restaurant> getWithEmptyMenu() {
-        log.info("get all with empty menu");
-        return repository.getAllWithEmptyMenu().orElseGet(List::of);
+    @Operation(summary = "get list of restaurants with empty today menu")
+    @GetMapping("/empty-today")
+    public List<RestaurantTo> getWithEmptyTodayMenu() {
+        return repository.getAllWithAllMenus().orElseGet(List::of).stream()
+                .filter(restaurant ->
+                        restaurant.getMenus()
+                                .stream()
+                                .noneMatch(menu -> menu.getDate().isEqual(LocalDate.now())))
+                .map(RestaurantUtil::createToFromRestaurant)
+                .collect(Collectors.toList());
     }
 
     @Operation(summary = "delete restaurant by id")

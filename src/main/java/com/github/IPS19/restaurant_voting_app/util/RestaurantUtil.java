@@ -9,4 +9,8 @@ public class RestaurantUtil {
     public static Restaurant createFromTo(RestaurantTo restaurantTo) {
         return new Restaurant(restaurantTo.getId(), restaurantTo.getName());
     }
+
+    public static RestaurantTo createToFromRestaurant(Restaurant restaurant) {
+        return new RestaurantTo(restaurant.getId(), restaurant.getName());
+    }
 }

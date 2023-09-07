@@ -92,6 +92,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MenuTestData.MENU_TO_MATCHER.contentJson(MenuTestData.oldMenuTo1, MenuTestData.oldMenuTo2, MenuTestData.oldMenuTo3));
+                .andExpect(MenuTestData.MENU_TO_MATCHER.contentJson(MenuTestData.oldMenuTo1, MenuTestData.oldMenuTo2,
+                        MenuTestData.oldMenuTo3, MenuTestData.oldMenuTo4));
     }
 }

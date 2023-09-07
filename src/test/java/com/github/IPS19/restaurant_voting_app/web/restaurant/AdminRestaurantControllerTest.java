@@ -41,10 +41,10 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getWithEmptyMenu() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "empty-menu"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "empty-today"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RestaurantTestData.RESTAURANT_MATCHER.contentJson(List.of(RestaurantTestData.WITHOUT_MENU)));
+                .andExpect(RestaurantTestData.RESTAURANT_MATCHER.contentJson(List.of(RestaurantTestData.WITHOUT_TODAY_MENU, RestaurantTestData.WITHOUT_MENU)));
     }
 
     @Test

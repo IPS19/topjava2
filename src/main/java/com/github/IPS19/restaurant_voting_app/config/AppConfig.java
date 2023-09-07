@@ -53,7 +53,8 @@ public class AppConfig {
 
     @Bean
     public Caffeine<Object, Object> caffeineConfig() {
-        return Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES);
+        return Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES)
+                .expireAfterAccess(5, TimeUnit.MINUTES);
     }
 
     @Bean

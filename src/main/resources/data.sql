@@ -18,6 +18,7 @@ INSERT INTO restaurant (name)
 VALUES ('Tokio'),
        ('Ginza'),
        ('Bahroma'),
+       ('Without Today Menu'),
        ('Without Menu');
 
 INSERT INTO menu (menu_date, restaurant_id)
@@ -26,7 +27,9 @@ VALUES (current_date, 1), /*1*/
        (current_date, 3), /*3*/
        ('2021-05-05', 1), /*4*/
        ('2021-05-05', 2), /*5*/
-       ('2021-05-05', 3); /*6*/
+       ('2021-05-05', 3), /*6*/
+       ('2021-05-05', 4), /*7*/
+       ('2024-02-28', 4); /*8*/
 
 INSERT INTO dish_item (menu_id, price, dish_name)
 VALUES (1, 100, 'burgers'),
@@ -46,7 +49,13 @@ VALUES (1, 100, 'burgers'),
        (5, 152, 'restaurant_2 old menu item3'),
        (6, 152, 'restaurant_3 old menu item'),
        (6, 152, 'restaurant_3 old menu item2'),
-       (6, 152, 'restaurant_3 old menu item3');
+       (6, 152, 'restaurant_3 old menu item3'),
+       (7, 152, 'rest_without_today old menu item'),
+       (7, 152, 'rest_without_today old menu item2'),
+       (7, 152, 'rest_without_today old menu item3'),
+       (8, 152, 'rest_without_today future menu item'),
+       (8, 152, 'rest_without_today future menu item2'),
+       (8, 152, 'rest_without_today future menu item3');
 
 INSERT INTO vote (vote_date, user_id, restaurant_id)
 VALUES (current_date, 4, 1), /*1*/

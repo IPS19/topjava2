@@ -32,6 +32,10 @@ public class MenuTestData {
             new DishItem(152, "restaurant_3 old menu item2"), new DishItem(152, "restaurant_3 old menu item3")),
             LocalDate.of(2021, 5, 5));
 
+    public static final Menu oldMenu4 = new Menu(MENU1_ID + 6, Set.of(new DishItem(152, "rest_without_today old menu item"),
+            new DishItem(152, "rest_without_today old menu item2"), new DishItem(152, "rest_without_today old menu item3")),
+            LocalDate.of(2021, 5, 5));
+
     public static final Menu notValidMenu = new Menu(MENU1_ID + 2, Set.of(new DishItem(0, "ONE ITEM")),
             LocalDate.now());
 
@@ -41,6 +45,7 @@ public class MenuTestData {
     public static final MenuTo oldMenuTo1 = MenuUtil.createToFromMenu(oldMenu1);
     public static final MenuTo oldMenuTo2 = MenuUtil.createToFromMenu(oldMenu2);
     public static final MenuTo oldMenuTo3 = MenuUtil.createToFromMenu(oldMenu3);
+    public static final MenuTo oldMenuTo4 = MenuUtil.createToFromMenu(oldMenu4);
 
     public static MenuTo getNew() {
         return new MenuTo(Set.of(new DishItemTo(100, "new item1"), new DishItemTo(200, "new item2"),

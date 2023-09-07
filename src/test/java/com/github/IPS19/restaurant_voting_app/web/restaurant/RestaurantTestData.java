@@ -27,7 +27,8 @@ public class RestaurantTestData {
     public static final Restaurant restaurant1 = new Restaurant(RESTAURANT1_ID, "Tokio");
     public static final Restaurant restaurant2 = new Restaurant(RESTAURANT1_ID + 1, "Ginza");
     public static final Restaurant restaurant3 = new Restaurant(RESTAURANT1_ID + 2, "Bahroma");
-    public static final Restaurant WITHOUT_MENU = new Restaurant(RESTAURANT1_ID + 3, "Without Menu");
+    public static final Restaurant WITHOUT_TODAY_MENU = new Restaurant(RESTAURANT1_ID + 3, "Without Today Menu");
+    public static final Restaurant WITHOUT_MENU = new Restaurant(RESTAURANT1_ID + 4, "Without Menu");
 
     public static final Restaurant restaurantWithOldMenu1 = new Restaurant(RESTAURANT1_ID + 10, "Tokio");
     public static final Restaurant restaurantWithOldMenu2 = new Restaurant(RESTAURANT1_ID + 20, "Ginza");
@@ -35,7 +36,7 @@ public class RestaurantTestData {
 
     public static final RestaurantTo restaurantTo1 = new RestaurantTo(restaurant1.getId(), restaurant1.getName());
 
-    public static final List<Restaurant> restaurants = List.of(restaurant1, restaurant2, restaurant3, WITHOUT_MENU);
+    public static final List<Restaurant> restaurants = List.of(restaurant1, restaurant2, restaurant3, WITHOUT_TODAY_MENU, WITHOUT_MENU);
 
     static {
         restaurant1.setMenus(List.of(MenuTestData.menu1));
