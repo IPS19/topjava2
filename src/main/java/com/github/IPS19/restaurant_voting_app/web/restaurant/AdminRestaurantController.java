@@ -1,11 +1,10 @@
 package com.github.IPS19.restaurant_voting_app.web.restaurant;
 
 import com.github.IPS19.restaurant_voting_app.model.Restaurant;
-import com.github.IPS19.restaurant_voting_app.repository.MenuRepository;
 import com.github.IPS19.restaurant_voting_app.repository.RestaurantRepository;
+import com.github.IPS19.restaurant_voting_app.service.RestaurantService;
 import com.github.IPS19.restaurant_voting_app.to.MenuTo;
 import com.github.IPS19.restaurant_voting_app.to.RestaurantTo;
-import com.github.IPS19.restaurant_voting_app.util.MenuUtil;
 import com.github.IPS19.restaurant_voting_app.util.RestaurantUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -40,7 +39,7 @@ public class AdminRestaurantController extends AbstractRestaurantController {
 
     private final RestaurantRepository repository;
 
-    private final MenuRepository menuRepository;
+    private final RestaurantService service;
 
     @Operation(summary = "get list of all restaurants")
     @GetMapping
@@ -58,7 +57,7 @@ public class AdminRestaurantController extends AbstractRestaurantController {
     @GetMapping("/{restaurantId}/menus")
     public List<MenuTo> getRestaurantMenusHistory(@PathVariable int restaurantId) {
         log.info("get all menus from restaurant {}", restaurantId);
-        return MenuUtil.createTosFromMenus(menuRepository.getAllByRestaurantId(restaurantId).orElseGet(List::of));
+        return service.getRestaurantMenusHistory(restaurantId);
     }
 
     //https://www.baeldung.com/spring-request-param#:~:text=Using%20Java%208%20Optional

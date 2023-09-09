@@ -1,5 +1,6 @@
 package com.github.IPS19.restaurant_voting_app.web.vote;
 
+import com.github.IPS19.restaurant_voting_app.service.VoteService;
 import com.github.IPS19.restaurant_voting_app.util.VoteUtil;
 import com.github.IPS19.restaurant_voting_app.web.AbstractControllerTest;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = USER_MAIL)
         //https://www.baeldung.com/java-override-system-time#:~:text=4.2.-,Using%20Mockito,-In%20addition%2C%20if
     void reVote() throws Exception {
-        LocalTime notForbiddenRevote = UserVoteController.FORBIDDEN_TO_REVOTE_AFTER.minusHours(1L);
+        LocalTime notForbiddenRevote = VoteService.FORBIDDEN_TO_REVOTE_AFTER.minusHours(1L);
         try (MockedStatic<LocalTime> theMock = Mockito.mockStatic(LocalTime.class)) {
             theMock.when(LocalTime::now).thenReturn(notForbiddenRevote);
             perform(MockMvcRequestBuilders.post(REST_URL_SLASH_TODAY + "/" + RESTAURANT1_ID))
@@ -45,7 +46,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.voteToTO(restaurant1)));
         }
-        LocalTime forbiddenToRevote = UserVoteController.FORBIDDEN_TO_REVOTE_AFTER.plusHours(1L);
+        LocalTime forbiddenToRevote = VoteService.FORBIDDEN_TO_REVOTE_AFTER.plusHours(1L);
         try (MockedStatic<LocalTime> theMock = Mockito.mockStatic(LocalTime.class)) {
             theMock.when(LocalTime::now).thenReturn(forbiddenToRevote);
             perform(MockMvcRequestBuilders.post(REST_URL_SLASH_TODAY + "/" + RESTAURANT1_ID))

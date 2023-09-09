@@ -2,9 +2,8 @@ package com.github.IPS19.restaurant_voting_app.web.menu;
 
 import com.github.IPS19.restaurant_voting_app.model.Menu;
 import com.github.IPS19.restaurant_voting_app.repository.MenuRepository;
-import com.github.IPS19.restaurant_voting_app.repository.RestaurantRepository;
+import com.github.IPS19.restaurant_voting_app.service.MenuService;
 import com.github.IPS19.restaurant_voting_app.to.MenuTo;
-import com.github.IPS19.restaurant_voting_app.util.MenuUtil;
 import com.github.IPS19.restaurant_voting_app.util.OptionalExceptionUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -23,8 +22,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.github.IPS19.restaurant_voting_app.util.validation.ValidationUtil.checkNew;
-
 @RestController
 @RequestMapping(value = AdminMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
@@ -34,7 +31,7 @@ public class AdminMenuController {
 
     private final MenuRepository repository;
 
-    private final RestaurantRepository restaurantRepository;
+    private final MenuService service;
 
     @Operation(summary = "get list of menus on a specific date by id",
             description = "example: /api/admin/menus?date=2021-05-05, if url has no parameter - will substitute today date")
@@ -48,7 +45,7 @@ public class AdminMenuController {
 
     @Transactional
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "add today restaurant menu")
+    @Operation(summary = "add restaurant menu on date")
     @PostMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Caching(
             put = {
@@ -58,14 +55,11 @@ public class AdminMenuController {
     )
     public Menu addNew(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
         log.info("add menu for restaurant {}", restaurantId);
-        checkNew(menuTo);
-        Menu menu = MenuUtil.createTodayNewFromTo(menuTo);
-        menu.setRestaurant(restaurantRepository.getReferenceById(restaurantId));
-        return repository.save(menu);
+        return service.addNew(menuTo, restaurantId);
     }
 
     @Transactional
-    @Operation(summary = "update today restaurant menu")
+    @Operation(summary = "update restaurant menu on date")
     @PutMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Caching(
             evict = {
@@ -76,12 +70,7 @@ public class AdminMenuController {
     )
     public void update(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
         log.info("update menu for restaurant {}", restaurantId);
-        Menu menu = MenuUtil.createTodayNewFromTo(menuTo);
-        menu.setId(OptionalExceptionUtil.getOrThrow(repository.getByRestaurantIdAndDate(restaurantId, menuTo.getDate()),
-                        "restaurant " + restaurantId + "is not exist or doesn't have menu on" + menuTo.getDate())
-                .id());
-        menu.setRestaurant(restaurantRepository.getReferenceById(restaurantId));
-        repository.save(menu);
+        service.update(menuTo, restaurantId);
     }
 
     @Operation(summary = "get menu of restaurant on a specific date by id",
@@ -93,10 +82,9 @@ public class AdminMenuController {
         LocalDate onDate = date.orElseGet(LocalDate::now);
         return OptionalExceptionUtil
                 .getOrThrow(repository.getByRestaurantIdAndDate(restaurantId, onDate),
-                        "Restaurant " + restaurantId + " has no menu on" + onDate);
+                        "Restaurant " + restaurantId + " has no menu on " + onDate);
     }
 
-    @Transactional
     @Operation(summary = "delete menu of restaurant on a specific date by id",
             description = "example: /api/admin/menus/2?date=2021-05-05, if url has no parameter - will delete today menu")
     @DeleteMapping("/{restaurantId}")
@@ -108,13 +96,10 @@ public class AdminMenuController {
                     @CacheEvict(value = "restaurantsWithMenu", allEntries = true)
             }
     )
-    public void deleteByIdDate(@PathVariable int restaurantId, @RequestParam(required = false)
+    public void deleteByRestaurantIdDate(@PathVariable int restaurantId, @RequestParam(required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
         LocalDate onDate = date.orElseGet(LocalDate::now);
         log.info("delete menu of restaurant {} on {}", restaurantId, onDate);
-        Menu toDelete = OptionalExceptionUtil
-                .getOrThrow(repository.getByRestaurantIdAndDate(restaurantId, date.orElseGet(LocalDate::now)),
-                        "not found menu on restaurant" + restaurantId + "on date " + onDate);
-        repository.delete(toDelete);
+        service.deleteByRestaurantIdDate(restaurantId, onDate);
     }
 }
