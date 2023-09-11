@@ -15,7 +15,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -43,7 +42,6 @@ public class AdminMenuController {
         return repository.getAllByDate(onDate).orElseGet(List::of);
     }
 
-    @Transactional
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "add restaurant menu on date")
     @PostMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -58,7 +56,6 @@ public class AdminMenuController {
         return service.addNew(menuTo, restaurantId);
     }
 
-    @Transactional
     @Operation(summary = "update restaurant menu on date")
     @PutMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Caching(

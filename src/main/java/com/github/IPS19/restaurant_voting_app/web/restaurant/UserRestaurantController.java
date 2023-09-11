@@ -43,10 +43,10 @@ public class UserRestaurantController extends AbstractRestaurantController {
         return super.getAllWithMenuByDate(LocalDate.now());
     }
 
-    @Operation(summary = "get restaurant with menu")
+    @Operation(summary = "get restaurant with today menu")
     @GetMapping("/{id}/with-menu")
     @Cacheable("restaurantWithTodayMenu")
-    public ResponseEntity<Restaurant> getWithTodayMenu(@PathVariable int id) {
-        return ResponseEntity.of(super.getWithMenuByDate(id, LocalDate.now()));
+    public Restaurant getWithTodayMenu(@PathVariable int id) {
+        return super.getWithMenuByDate(id, LocalDate.now());
     }
 }

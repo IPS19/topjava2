@@ -41,7 +41,7 @@ public class UserMenuController {
     public RestaurantTo getRestaurantByMenuId(@PathVariable int id) {
         log.info("get restaurant by menu id");
         Restaurant restaurant = OptionalExceptionUtil.getOrThrow(repository.getRestaurantByMenuId(id),
-                "no restaurant have menu with id" + id);
+                "no restaurant have menu with id " + id);
         return new RestaurantTo(restaurant.getId(), restaurant.getName());
     }
 }

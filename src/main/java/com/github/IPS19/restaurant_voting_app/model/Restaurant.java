@@ -11,7 +11,8 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -23,7 +24,11 @@ public class Restaurant extends NamedEntity {
     @OneToMany(mappedBy = "restaurant")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonManagedReference
-    private List<Menu> menus;
+    private Set<Menu> menus = new LinkedHashSet<>();
+
+    public void addMenu(Menu menu) {
+        menus.add(menu);
+    }
 
     public Restaurant(Integer id, String name) {
         super(id, name);

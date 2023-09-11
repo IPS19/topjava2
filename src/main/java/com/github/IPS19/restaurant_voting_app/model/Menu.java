@@ -1,6 +1,7 @@
 package com.github.IPS19.restaurant_voting_app.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -21,12 +23,11 @@ public class Menu extends BaseEntity {
     @NotNull
     private LocalDate date;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "dish_item")
-    @JoinColumn(name = "menu_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "menu")
     @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<DishItem> items;
+    @JsonManagedReference
+    private Set<DishItem> items = new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")

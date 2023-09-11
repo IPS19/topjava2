@@ -16,7 +16,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -64,20 +63,19 @@ public class AdminRestaurantController extends AbstractRestaurantController {
     @Operation(summary = "get restaurant with menu by id and date",
             description = "example: /api/admin/restaurants/2/menu?date=2021-05-05, if url has no parameter - will substitute today date")
     @GetMapping("/{restaurantId}/menu")
-    public ResponseEntity<Restaurant> getWithMenuByIdDate(@PathVariable int restaurantId, @RequestParam(required = false)
+    public Restaurant getWithMenuByIdDate(@PathVariable int restaurantId, @RequestParam(required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
-        return ResponseEntity.of(super.getWithMenuByDate(restaurantId, date.orElseGet(LocalDate::now)));
+        return super.getWithMenuByDate(restaurantId, date.orElseGet(LocalDate::now));
     }
 
     @Operation(summary = "get restaurant with menu by id and date",
-            description = "example: /api/admin/restaurants/2?date=2021-05-05/all-with-menu, if url has no parameter - will substitute today date")
+            description = "example: /api/admin/restaurants/with-menu?date=2021-05-05, if url has no parameter - will substitute today date")
     @GetMapping("/with-menu")
     public List<Restaurant> getAllWithMenuByDate(@RequestParam(required = false)
                                                  @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date) {
         return super.getAllWithMenuByDate(date.orElseGet(LocalDate::now));
     }
 
-    @Transactional
     @Operation(summary = "update restaurant")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -94,7 +92,6 @@ public class AdminRestaurantController extends AbstractRestaurantController {
         repository.save(RestaurantUtil.createFromTo(restaurantTo));
     }
 
-    @Transactional
     @Operation(summary = "create new restaurant")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(value = "restaurants", allEntries = true)

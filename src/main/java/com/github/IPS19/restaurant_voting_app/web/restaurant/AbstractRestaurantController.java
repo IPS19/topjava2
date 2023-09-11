@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 public abstract class AbstractRestaurantController {
@@ -26,16 +25,16 @@ public abstract class AbstractRestaurantController {
         return repository.findAll();
     }
 
-    public Optional<Restaurant> getWithMenuByDate(int id, LocalDate date) {
+    public Restaurant getWithMenuByDate(int id, LocalDate date) {
         log.info("get restaurant {} with menu on {}", id, date);
         return OptionalExceptionUtil
-                .getOrThrow(Optional.of(repository.getWithMenuByDate(id, date)),
+                .getOrThrow(repository.getWithMenuByDate(id, date),
                         "restaurant or restaurant's menu on date " + date + " not found");
     }
 
     public List<Restaurant> getAllWithMenuByDate(LocalDate date) {
         log.info("get all restaurant with menu on {}", date);
-        return repository.getAllWithMenuByDate(date);
+        return repository.getAllWithMenuByDate(date).orElseGet(List::of);
     }
 
     public void delete(int id) {
