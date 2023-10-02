@@ -23,7 +23,7 @@ public class Menu extends BaseEntity {
     @NotNull
     private LocalDate date;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", orphanRemoval = true)
     @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonManagedReference
