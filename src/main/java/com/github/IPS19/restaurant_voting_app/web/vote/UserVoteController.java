@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -34,8 +35,8 @@ public class UserVoteController {
     }
 
     @Operation(summary = "make vote for restaurant by it's id")
-    @PostMapping(value = "/today/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/today/{id}")//, consumes = MediaType.APPLICATION_JSON_VALUE --UserVoteController#vote - не CSRF защищено.. (должен быть MediaType.APPLICATION_JSON_VALUE) и обычно 201 с Location
+    @ResponseStatus(HttpStatus.CREATED)//ResponseEntity<VoteTo>
     public VoteTo vote(@PathVariable int id) {
         return service.vote(id);
     }
@@ -48,9 +49,7 @@ public class UserVoteController {
 
     @Operation(summary = "get id of restaurant that was voted")
     @GetMapping("/today")
-    public VoteTo getToday() {
-        return new VoteTo(OptionalExceptionUtil
-                .getOrThrow(repository.getVotedRestaurantByDate(AuthUser.authUser(), LocalDate.now()), "no vote today")
-                .id());
+    public ResponseEntity<Integer> getToday() {
+        return ResponseEntity.of(repository.getVotedRestaurantByDate(AuthUser.authUser(), LocalDate.now()));
     }
 }
