@@ -4,7 +4,6 @@ import com.github.IPS19.restaurant_voting_app.repository.VoteRepository;
 import com.github.IPS19.restaurant_voting_app.service.VoteService;
 import com.github.IPS19.restaurant_voting_app.to.VoteRespTo;
 import com.github.IPS19.restaurant_voting_app.to.VoteTo;
-import com.github.IPS19.restaurant_voting_app.util.OptionalExceptionUtil;
 import com.github.IPS19.restaurant_voting_app.util.VoteUtil;
 import com.github.IPS19.restaurant_voting_app.web.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -31,25 +32,32 @@ public class UserVoteController {
     @Operation(summary = "get all")
     @GetMapping
     public List<VoteRespTo> getAllUsersVotes() {
+        log.info("get all votes");
         return VoteUtil.createRespTos(repository.getUsersVotes(AuthUser.authUser()).orElseGet(List::of));
     }
 
     @Operation(summary = "make vote for restaurant by it's id")
-    @PostMapping(value = "/today/{id}")//, consumes = MediaType.APPLICATION_JSON_VALUE --UserVoteController#vote - не CSRF защищено.. (должен быть MediaType.APPLICATION_JSON_VALUE) и обычно 201 с Location
-    @ResponseStatus(HttpStatus.CREATED)//ResponseEntity<VoteTo>
-    public VoteTo vote(@PathVariable int id) {
-        return service.vote(id);
+    @PostMapping(value = "/today/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<VoteTo> vote(@PathVariable int id) {
+        log.info("vote for restaurant" + id);
+        VoteTo created = service.vote(id);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL).build().toUri();
+        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @Operation(summary = "revote for restaurant by it's id - only before 11 A.M.")
     @PutMapping(value = "/today/{id}")
     public VoteTo reVote(@PathVariable int id) {
+        log.info("revote for restaurant " + id);
         return service.reVote(id);
     }
 
     @Operation(summary = "get id of restaurant that was voted")
     @GetMapping("/today")
     public ResponseEntity<Integer> getToday() {
+        log.info("get today vote");
         return ResponseEntity.of(repository.getVotedRestaurantByDate(AuthUser.authUser(), LocalDate.now()));
     }
 }
